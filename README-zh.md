@@ -4,7 +4,7 @@
 
 > 基于元认知框架的 AI Rust 开发助手
 
-[![Version](https://img.shields.io/badge/version-2.0.5-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
+[![Version](https://img.shields.io/badge/version-2.0.6-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/anthropics/claude-code)
 
@@ -276,6 +276,7 @@ cd my-rust-project
 ## 致谢
 
 - [@pinghe](https://github.com/pinghe) - `context: fork` 支持建议 ([#4](https://github.com/ZhangHanDong/rust-skills/issues/4))
+- [@DoiiarX](https://github.com/DoiiarX) - OpenCode 安装修复 ([#6](https://github.com/ZhangHanDong/rust-skills/issues/6))
 
 ## 许可证
 

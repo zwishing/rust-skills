@@ -5,6 +5,16 @@ All notable changes to rust-skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2025-01-22
+
+### Fixed
+- **OpenCode installation** - Rewrote installation guide with correct instructions config (Issue #6, thanks @DoiiarX)
+  - Use `instructions` config option instead of non-existent `plugins` key
+  - Restructured `.opencode/` directory: `plugin/` → `instructions/`
+  - Added troubleshooting section and feature comparison table
+
+---
+
 ## [2.0.5] - 2025-01-22
 
 ### Added

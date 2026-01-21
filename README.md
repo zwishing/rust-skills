@@ -4,7 +4,7 @@
 
 > AI-powered Rust development assistant with meta-cognition framework
 
-[![Version](https://img.shields.io/badge/version-2.0.5-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
+[![Version](https://img.shields.io/badge/version-2.0.6-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/anthropics/claude-code)
 
@@ -276,6 +276,7 @@ Contributions are welcome! Please read our contributing guidelines before submit
 ## Acknowledgments
 
 - [@pinghe](https://github.com/pinghe) - `context: fork` support suggestion ([#4](https://github.com/ZhangHanDong/rust-skills/issues/4))
+- [@DoiiarX](https://github.com/DoiiarX) - OpenCode installation fix ([#6](https://github.com/ZhangHanDong/rust-skills/issues/6))
 
 ## License
 
