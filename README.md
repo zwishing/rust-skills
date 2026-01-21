@@ -4,7 +4,7 @@
 
 > AI-powered Rust development assistant with meta-cognition framework
 
-[![Version](https://img.shields.io/badge/version-2.0.2-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
+[![Version](https://img.shields.io/badge/version-2.0.5-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/anthropics/claude-code)
 
@@ -54,7 +54,17 @@ Install directly from Claude Code Plugin Marketplace:
 /plugin marketplace add ZhangHanDong/rust-skills
 ```
 
-### Method 2: Full Plugin
+### Method 2: NPX
+
+Install using npx:
+
+```bash
+npx skills add ZhangHanDong/rust-skills
+```
+
+> ⚠️ **Note**: NPX installs skills only. Rust-skills is a **plugin architecture** that relies on agents, commands, and hooks for full functionality. For the complete experience, use Method 1 (Marketplace) or Method 3 (Full Plugin).
+
+### Method 3: Full Plugin
 
 This method enables **all features including hooks** for automatic meta-cognition triggering.
 
@@ -66,7 +76,7 @@ git clone https://github.com/ZhangHanDong/rust-skills.git
 claude --plugin-dir /path/to/rust-skills
 ```
 
-### Method 3: Skills Only
+### Method 4: Skills Only
 
 This method only installs skills without hooks. You need to manually invoke skills.
 
@@ -80,13 +90,13 @@ cp -r rust-skills/skills/* ~/.claude/skills/
 
 ### Feature Comparison
 
-| Feature | Marketplace | Full Plugin | Skills Only |
-|---------|-------------|-------------|-------------|
-| All 31 Skills | ✅ | ✅ | ✅ |
-| Auto meta-cognition trigger | ✅ | ✅ | ❌ |
-| Hook-based routing | ✅ | ✅ | ❌ |
-| Background agents | ✅ | ✅ | ✅ |
-| Easy updates | ✅ | ❌ | ❌ |
+| Feature | Marketplace | NPX | Full Plugin | Skills Only |
+|---------|-------------|-----|-------------|-------------|
+| All 31 Skills | ✅ | ✅ | ✅ | ✅ |
+| Auto meta-cognition trigger | ✅ | ✅ | ✅ | ❌ |
+| Hook-based routing | ✅ | ✅ | ✅ | ❌ |
+| Background agents | ✅ | ✅ | ✅ | ✅ |
+| Easy updates | ✅ | ✅ | ❌ | ❌ |
 
 ### Permission Configuration
 
@@ -262,6 +272,10 @@ Domain-correct architectural solution
 ## Contributing
 
 Contributions are welcome! Please read our contributing guidelines before submitting PRs.
+
+## Acknowledgments
+
+- [@pinghe](https://github.com/pinghe) - `context: fork` support suggestion ([#4](https://github.com/ZhangHanDong/rust-skills/issues/4))
 
 ## License
 

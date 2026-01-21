@@ -5,6 +5,45 @@ All notable changes to rust-skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.5] - 2025-01-22
+
+### Added
+- **Experimental:** `meta-cognition-parallel` skill for three-layer parallel analysis
+  - `agents/layer1-analyzer.md` - Language mechanics analysis agent
+  - `agents/layer2-analyzer.md` - Design choices analysis agent
+  - `agents/layer3-analyzer.md` - Domain constraints analysis agent
+- New command: `/meta-parallel` for testing parallel meta-cognition
+
+### Documentation
+- NPX installation note: recommend plugin installation for full functionality
+
+---
+
+## [2.0.4] - 2025-01-22
+
+### Added
+- `context: fork` support for task-based skills (Issue #4, thanks @pinghe)
+  - `rust-skill-creator` - runs in isolated general-purpose agent
+  - `core-dynamic-skills` - runs in isolated general-purpose agent
+  - `core-fix-skill-docs` - runs in isolated general-purpose agent
+  - `rust-daily` - runs in isolated Explore agent
+
+### Documentation
+- Added analysis of which skills benefit from forked context
+
+---
+
+## [2.0.3] - 2025-01-22
+
+### Fixed
+- `.mcp.json` - Added missing `mcpServers` wrapper (PR #3)
+- `README.md`, `README-zh.md`, `README-ja.md` - Added NPX installation method (PR #1)
+
+### Changed
+- Updated feature comparison tables to include NPX method
+
+---
+
 ## [2.0.2] - 2025-01-22
 
 ### Changed

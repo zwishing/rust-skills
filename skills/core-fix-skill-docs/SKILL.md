@@ -2,6 +2,8 @@
 name: core-fix-skill-docs
 # Internal maintenance tool - no description to prevent auto-triggering
 # Triggered by: /fix-skill-docs command
+context: fork
+agent: general-purpose
 ---
 
 # Fix Skill Documentation

@@ -1,40 +1,53 @@
-# Context Optimization Plan
+# Context Optimization Guide
 
-> 优化 skills 上下文消耗，减少 token 使用
+> Rust Skills 上下文优化策略与效果
 
-## 背景
+## 概述
 
-当前 skills 总上下文：
-- SKILL.md 文件：135 KB (~34K tokens)
-- 子文件：269 KB (~68K tokens)
-- 总计：404 KB (~102K tokens)
+Rust Skills 采用三种方法优化上下文消耗，综合可节省约 **68%** 的 token 使用量。
 
-Claude Code 采用懒加载机制，单次查询通常只加载一个 skill。
+| 优化方法 | 类型 | 适用场景 | 节省比例 |
+|---------|------|---------|---------|
+| **Skill 内容拆分** | 静态 | 大型参考 skill | 50-60% |
+| **context: fork** | 动态 | 任务执行型 skill | 75-85% |
+| **三层并行 Fork** | 动态 | 多 skill 协作分析 | 65-75% |
 
-## 优化目标
+---
 
-| Skill | 优化前 | 优化后 | 节省 |
-|-------|--------|--------|------|
-| rust-router | 18 KB | ~9 KB | 50% |
-| unsafe-checker | 2.4 KB (SKILL.md) | 保持 | - |
+## 方法一：Skill 内容拆分（静态优化）
 
-## rust-router 优化方案
+### 原理
 
-### 分析
+将大型 Skill 的非核心内容拆分到子文件，主 SKILL.md 只保留核心路由逻辑，其他内容按需加载。
 
-rust-router SKILL.md 内容分布：
+### 实施案例：rust-router
 
-| 部分 | 大小 | 作用 | 处理 |
-|------|------|------|------|
-| Frontmatter (description) | ~1 KB | 自动触发关键词 | **保留** |
-| Meta-Cognition Framework | ~2 KB | 核心路由逻辑 | **保留** |
-| 路由表 (Layer 1/2/3) | ~3 KB | 核心路由映射 | **保留** |
-| Error Code 映射表 | ~1.5 KB | 错误码路由 | **保留** |
-| 优先级规则 | ~1 KB | 冲突解决 | **保留** |
-| Negotiation 协议详情 | ~4 KB | 比较查询处理 | **移出** |
-| Workflow 示例 | ~3 KB | 使用示例 | **移出** |
-| Skill 文件路径列表 | ~1.5 KB | 冗余信息 | **删除** |
-| OS-Checker 集成 | ~1 KB | 外部工具集成 | **移出** |
+| 指标 | 优化前 | 优化后 | 节省 |
+|------|--------|--------|------|
+| 文件大小 | 18.7 KB | 8.1 KB | **56%** |
+| 约 Token | ~4,700 | ~2,000 | **~2,700 tokens** |
+
+### 文件结构
+
+```
+skills/rust-router/
+├── SKILL.md (8.1KB - 核心路由，始终加载)
+├── patterns/
+│   └── negotiation.md (协商协议，按需加载)
+├── examples/
+│   └── workflow.md (工作流示例，按需加载)
+└── integrations/
+    └── os-checker.md (集成说明，按需加载)
+```
+
+### 移出内容详情
+
+| 内容 | 移动到 | 大小 |
+|------|--------|------|
+| Negotiation Protocol | `patterns/negotiation.md` | 4.5 KB |
+| Workflow Example | `examples/workflow.md` | 2.3 KB |
+| OS-Checker Integration | `integrations/os-checker.md` | 1.3 KB |
+| Skill File Paths | 删除（冗余） | 1.5 KB |
 
 ### 关键点：自动触发不受影响
 
@@ -50,93 +63,250 @@ Triggers on: Rust, cargo, rustc, E0382, E0597..."
 
 SKILL.md body 内容是触发**之后**的指导逻辑，移出到子文件不影响触发。
 
-### 执行计划
+### 适用场景
 
-#### 1. 创建子目录结构
+- 包含大量参考内容的 Skill
+- 有多种使用场景的 Skill
+- 包含详细示例/模板的 Skill
 
+---
+
+## 方法二：context: fork 隔离执行（动态优化）
+
+### 原理
+
+使用 `context: fork` 让 Skill 在隔离的 subagent 上下文中执行，中间过程不污染主上下文，只返回摘要结果。
+
+### 配置方式
+
+```yaml
+---
+name: my-task-skill
+description: "Task description"
+context: fork
+agent: general-purpose  # 或 Explore
+---
 ```
-skills/rust-router/
-├── SKILL.md              # 精简后的核心内容
-├── patterns/
-│   └── negotiation.md    # Negotiation 协议详情
-├── examples/
-│   └── workflow.md       # Workflow 示例
-└── integrations/
-    └── os-checker.md     # OS-Checker 集成
-```
 
-#### 2. 从 SKILL.md 移出的内容
+### 实施案例
 
-| 内容 | 移动到 |
-|------|--------|
-| Negotiation Protocol (lines 449-600) | `patterns/negotiation.md` |
-| Workflow Example (lines 419-445) | `examples/workflow.md` |
-| OS-Checker Integration (lines 405-416) | `integrations/os-checker.md` |
+| Skill | 典型执行 Token | Fork 后主上下文 | 节省 |
+|-------|---------------|----------------|------|
+| `rust-skill-creator` | ~3,000 | ~500 (摘要) | **~83%** |
+| `core-dynamic-skills` | ~2,000 | ~400 | **~80%** |
+| `core-fix-skill-docs` | ~1,500 | ~300 | **~80%** |
+| `rust-daily` | ~2,500 | ~500 | **~80%** |
 
-#### 3. 从 SKILL.md 删除的内容
+### Fork 特性
 
-| 内容 | 原因 |
+| 特性 | 说明 |
 |------|------|
-| Skill File Paths (lines 359-401) | 冗余，可通过目录结构发现 |
+| 隔离执行 | Skill 在新的独立上下文中运行 |
+| 无对话历史 | Subagent **不能访问**主对话历史 |
+| 结果摘要 | 输出被摘要后返回主对话 |
+| 环境继承 | 工作目录、CLAUDE.md、环境变量继承 |
 
-### 实际效果 ✅
+### 继承关系
 
-| 指标 | 优化前 | 优化后 | 节省 |
-|------|--------|--------|------|
-| SKILL.md 大小 | 18.7 KB | 8.1 KB | **56%** |
-| 单次加载 tokens | ~4.7K | ~2K | **56%** |
-| 自动触发 | ✅ 正常 | ✅ 正常 | - |
-| 路由功能 | ✅ 完整 | ✅ 完整 | - |
+```
+主上下文 (Main Context)
+├── 对话历史 ──────────────► ❌ 不继承
+├── 当前工作目录 ──────────► ✅ 继承
+├── CLAUDE.md ─────────────► ✅ 继承 (作为参考)
+├── 预加载的 skills ────────► ✅ 可访问
+└── 环境变量 ──────────────► ✅ 继承
+```
 
-**子文件大小：**
-- `patterns/negotiation.md`: 4.5 KB
-- `examples/workflow.md`: 2.3 KB
-- `integrations/os-checker.md`: 1.3 KB
+### 适用场景
 
-## unsafe-checker 优化方案
+- 独立执行的任务（创建文件、同步数据等）
+- 不需要对话历史的操作
+- 探索/研究类任务
 
-### 当前状态
+### 不适用场景
 
-- SKILL.md: 2.4 KB
-- rules/*.md: 55 个文件，共 180 KB
+- 需要交互式追问用户
+- 需要完整推理过程可见
+- 结果细节很重要，不能被摘要
 
-### 分析
+---
 
-unsafe-checker 已采用按需加载设计：
-- SKILL.md 仅包含触发逻辑和规则索引
-- 具体规则在 `rules/` 子目录，按需加载
+## 方法三：三层并行 Fork（实验性）
 
-**结论：** 已经是最优结构，无需进一步优化。
+### 原理
+
+基于元认知框架的三层模型，将分析任务并行分发到三个隔离的 layer analyzer，各自独立分析后返回摘要，在主上下文进行跨层综合。
+
+### 架构
+
+```
+User Question
+     │
+     ▼
+meta-cognition-parallel (协调者)
+     │
+     ├─── Fork → layer1-analyzer ──► L1 摘要
+     │           (语言机制分析)
+     │
+     ├─── Fork → layer2-analyzer ──► L2 摘要    [并行]
+     │           (设计选择分析)
+     │
+     └─── Fork → layer3-analyzer ──► L3 摘要
+                 (领域约束分析)
+     │
+     ▼
+Cross-Layer Synthesis (主上下文)
+     │
+     └─► 领域正确的架构方案
+```
+
+### 上下文消耗对比
+
+**传统方式（主上下文）:**
+```
+├── 读取 m01-ownership    +1,200 tokens
+├── 读取 m02-resource     +1,000 tokens
+├── 读取 domain-fintech   +1,500 tokens
+├── 中间推理              +2,500 tokens
+└── 最终回答              +1,800 tokens
+                          ────────────
+                          ~8,000 tokens
+```
+
+**三层并行 Fork:**
+```
+├── L1 摘要返回           +600 tokens
+├── L2 摘要返回           +600 tokens
+├── L3 摘要返回           +600 tokens
+└── 跨层综合+回答         +700 tokens
+                          ────────────
+                          ~2,500 tokens
+```
+
+**节省：~69%**
+
+### 相关文件
+
+- `skills/meta-cognition-parallel/SKILL.md` - 协调 Skill
+- `agents/layer1-analyzer.md` - 语言机制分析 (m01-m07)
+- `agents/layer2-analyzer.md` - 设计选择分析 (m09-m15)
+- `agents/layer3-analyzer.md` - 领域约束分析 (domain-*)
+
+### 使用命令
+
+```bash
+/meta-parallel <your Rust question>
+```
+
+### 测试场景
+
+```bash
+# 测试 1: 交易系统
+/meta-parallel 交易系统报 E0382，trade record 被 move 了
+
+# 测试 2: Web API
+/meta-parallel Web API 中多个 handler 需要共享数据库连接池
+
+# 测试 3: CLI 工具
+/meta-parallel CLI 工具如何处理配置文件和命令行参数的优先级
+```
+
+---
+
+## 综合效果估算
+
+假设一次典型的 Rust 问答会话：
+
+| 阶段 | 优化前 | 优化后 |
+|------|--------|--------|
+| rust-router 加载 | 4,700 | 2,000 |
+| 多 skill 分析 | 8,000 | 2,500 |
+| 任务执行 | 3,000 | 500 |
+| **总计** | **15,700** | **5,000** |
+| **节省** | - | **~68%** |
+
+---
+
+## 选择决策树
+
+```
+问题类型
+    │
+    ├── 大型参考 Skill?
+    │   └── YES → 方法一: 内容拆分
+    │             将非核心内容移至子文件
+    │
+    ├── 独立执行任务?
+    │   └── YES → 方法二: context: fork
+    │             添加 context: fork 到 frontmatter
+    │
+    └── 多层协作分析?
+        └── YES → 方法三: 三层并行 Fork
+                  使用 meta-cognition-parallel
+```
+
+---
+
+## 最佳实践
+
+### 1. 内容拆分原则
+
+- 核心路由逻辑保留在 SKILL.md
+- 示例、模板移至 `examples/`
+- 集成说明移至 `integrations/`
+- 详细参考移至 `references/`
+
+### 2. Fork 使用原则
+
+- 只对任务型 Skill 使用 fork
+- 参考/指导型 Skill 不用 fork
+- 需要用户交互的不用 fork
+
+### 3. 并行分析原则
+
+- 各分析任务应独立，无依赖
+- 综合推理在主上下文完成
+- 显式传递所有必要信息给 fork
+
+---
 
 ## 验证清单
 
-优化完成后验证：
+### 方法一验证
 
 - [ ] rust-router 自动触发测试
   ```bash
   claude -p "E0382 错误怎么解决"
   claude -p "比较 tokio 和 async-std"
   ```
-- [ ] 路由功能测试
+
+### 方法二验证
+
+- [ ] Fork skill 执行测试
   ```bash
-  claude -p "unsafe 代码怎么写"  # 应路由到 unsafe-checker
-  claude -p "DDD in Rust"        # 应路由到 m09-domain
+  /sync-crate-skills
+  /rust-daily
   ```
-- [ ] 子文件引用测试
+
+### 方法三验证
+
+- [ ] 三层并行分析测试
   ```bash
-  claude -p "negotiation protocol"  # 应能找到 patterns/negotiation.md
+  /meta-parallel 交易系统报 E0382
   ```
 
-## 回滚方案
+---
 
-如优化后出现问题，可从 git 历史恢复：
+## 版本历史
 
-```bash
-git checkout HEAD~1 -- skills/rust-router/SKILL.md
-```
+| 版本 | 日期 | 优化内容 |
+|------|------|---------|
+| 2.0.0 | 2025-01-22 | rust-router 内容拆分 (56% 节省) |
+| 2.0.4 | 2025-01-22 | 4 个 skills 添加 context: fork (thanks @pinghe) |
+| 2.0.5 | 2025-01-22 | 三层并行 Fork 实验性支持 |
 
 ---
 
 **Created:** 2025-01-21
-**Status:** ✅ Completed
-**Result:** 56% reduction (18.7 KB → 8.1 KB)
+**Updated:** 2025-01-22
+**Status:** ✅ Implemented (Methods 1-3)

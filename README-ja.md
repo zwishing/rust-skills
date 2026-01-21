@@ -4,7 +4,7 @@
 
 > メタ認知フレームワークを備えた AI Rust 開発アシスタント
 
-[![Version](https://img.shields.io/badge/version-2.0.2-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
+[![Version](https://img.shields.io/badge/version-2.0.5-green.svg)](https://github.com/ZhangHanDong/rust-skills/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-blue)](https://github.com/anthropics/claude-code)
 
@@ -54,7 +54,17 @@ Claude Code プラグインマーケットプレイスから直接インスト�
 /plugin marketplace add ZhangHanDong/rust-skills
 ```
 
-### 方法2：完全プラグイン
+### 方法2：NPX
+
+npx を使用してインストール：
+
+```bash
+npx skills add ZhangHanDong/rust-skills
+```
+
+> ⚠️ **注意**：NPX は skills のみをインストールします。Rust-skills は **プラグインアーキテクチャ** を採用しており、完全な機能には agents、commands、hooks が必要です。完全な体験のためには、方法1（Marketplace）または方法3（完全プラグイン）をお勧めします。
+
+### 方法3：完全プラグイン
 
 この方法は **hooks を含むすべての機能**を有効にし、メタ認知を自動的にトリガーします。
 
@@ -66,7 +76,7 @@ git clone https://github.com/ZhangHanDong/rust-skills.git
 claude --plugin-dir /path/to/rust-skills
 ```
 
-### 方法3：Skills のみ
+### 方法4：Skills のみ
 
 この方法は skills のみをインストールし、hooks は含まれません。skills を手動で呼び出す必要があります。
 
@@ -80,13 +90,13 @@ cp -r rust-skills/skills/* ~/.claude/skills/
 
 ### 機能比較
 
-| 機能 | Marketplace | 完全プラグイン | Skills のみ |
-|------|-------------|----------------|-------------|
-| 全 31 Skills | ✅ | ✅ | ✅ |
-| 自動メタ認知トリガー | ✅ | ✅ | ❌ |
-| Hook ルーティング | ✅ | ✅ | ❌ |
-| バックグラウンドエージェント | ✅ | ✅ | ✅ |
-| 簡単な更新 | ✅ | ❌ | ❌ |
+| 機能 | Marketplace | NPX | 完全プラグイン | Skills のみ |
+|------|-------------|-----|----------------|-------------|
+| 全 31 Skills | ✅ | ✅ | ✅ | ✅ |
+| 自動メタ認知トリガー | ✅ | ✅ | ✅ | ❌ |
+| Hook ルーティング | ✅ | ✅ | ✅ | ❌ |
+| バックグラウンドエージェント | ✅ | ✅ | ✅ | ✅ |
+| 簡単な更新 | ✅ | ✅ | ❌ | ❌ |
 
 ### 権限設定
 
@@ -262,6 +272,10 @@ cd my-rust-project
 ## 貢献
 
 貢献を歓迎します！PR を提出する前に貢献ガイドラインをお読みください。
+
+## 謝辞
+
+- [@pinghe](https://github.com/pinghe) - `context: fork` サポートの提案 ([#4](https://github.com/ZhangHanDong/rust-skills/issues/4))
 
 ## ライセンス
 

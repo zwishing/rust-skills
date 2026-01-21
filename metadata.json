@@ -1,6 +1,6 @@
 {
   "name": "rust-skills",
-  "version": "2.0.2",
+  "version": "2.0.5",
   "description": "Comprehensive Rust learning and development skills for Claude",
   "author": "ZhangHanDong",
   "license": "MIT",
@@ -11,14 +11,15 @@
     "domain_skills": 7,
     "core_skills": 4,
     "utility_skills": 6,
-    "total_skills": 31,
+    "experimental_skills": 1,
+    "total_skills": 32,
     "unsafe_rules": 47,
     "coding_guidelines": {
       "p_rules": 80,
       "g_rules_compressed": true
     },
-    "agents": 5,
-    "commands": 15,
+    "agents": 8,
+    "commands": 16,
     "templates": 5
   },
 
@@ -63,6 +64,9 @@
       "core-agent-browser",
       "core-dynamic-skills",
       "core-fix-skill-docs"
+    ],
+    "experimental": [
+      "meta-cognition-parallel"
     ]
   },
 
@@ -71,7 +75,10 @@
     "rust-changelog",
     "docs-researcher",
     "clippy-researcher",
-    "std-docs-researcher"
+    "std-docs-researcher",
+    "layer1-analyzer",
+    "layer2-analyzer",
+    "layer3-analyzer"
   ],
 
   "commands": [
@@ -89,7 +96,8 @@
     "update-crate-skill",
     "create-skills-via-llms",
     "create-llms-for-skills",
-    "fix-skill-docs"
+    "fix-skill-docs",
+    "meta-parallel"
   ],
 
   "compatibility": {
